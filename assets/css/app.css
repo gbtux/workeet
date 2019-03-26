@@ -1,0 +1,28 @@
+body {
+    background-color: lightgray;
+}
+/* This is for documentation purposes and will not be needed in your application */
+#create .v-speed-dial {
+    position: absolute;
+}
+
+#create .v-btn--floating {
+    position: relative;
+}
+
+.dropzone-custom-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.dropzone-custom-title {
+    margin-top: 0;
+    color: #00b782;
+}
+
+.subtitle {
+    color: #314b5f;
+}

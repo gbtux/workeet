@@ -1,0 +1,42 @@
+{
+    "devDependencies": {
+        "@babel/core": "^7.4.0",
+        "@babel/plugin-proposal-object-rest-spread": "^7.4.0",
+        "@babel/plugin-transform-runtime": "^7.4.0",
+        "@babel/polyfill": "^7.4.0",
+        "@babel/preset-env": "^7.4.2",
+        "@babel/preset-es2015": "^7.0.0-beta.53",
+        "@babel/preset-stage-2": "^7.0.0",
+        "@babel/runtime": "^7.4.2",
+        "@symfony/webpack-encore": "^0.22.0",
+        "node-sass": "^4.11.0",
+        "sass-loader": "^7.1.0",
+        "stylus": "^0.54.5",
+        "stylus-loader": "^3.0.2",
+        "vue-loader": "^15.7.0",
+        "vue-template-compiler": "^2.6.10",
+        "vuetify-loader": "^1.2.1",
+        "webpack-notifier": "^1.6.0"
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "scripts": {
+        "dev-server": "encore dev-server",
+        "dev": "encore dev",
+        "watch": "encore dev --watch",
+        "build": "encore production --progress"
+    },
+    "dependencies": {
+        "axios": "^0.18.0",
+        "font-awesome": "^4.7.0",
+        "nprogress": "^0.2.0",
+        "roboto-fontface": "^0.10.0",
+        "vue": "^2.6.10",
+        "vue-perfect-scrollbar": "^0.1.0",
+        "vue-router": "^3.0.2",
+        "vue2-dropzone": "^3.5.7",
+        "vuetify": "^1.5.7",
+        "vuetify-confirm": "^0.2.4",
+        "vuex": "^3.1.0"
+    }
+}

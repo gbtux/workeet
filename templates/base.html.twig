@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}isiDROP{% endblock %}</title>
+        {% block stylesheets %}
+            <!-- <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet"> -->
+            <link rel="stylesheet" href="{{ asset('build/roboto.css') }}">
+            {# 'app' must match the first argument to addEntry() in webpack.config.js #}
+            {{ encore_entry_link_tags('app') }}
+
+            <!-- Renders a link tag (if your module requires any CSS)
+                 <link rel="stylesheet" href="/build/app.css"> -->
+        {% endblock %}
+    </head>
+    <body>
+        <noscript>
+            <strong>We're sorry but test doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+        </noscript>
+
+        <div id="app"></div>
+        <script>
+            let url_upload = '{{ oneup_uploader_endpoint('gallery') }}';
+            let home_id = '{{ homeID }}';
+        </script>
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+
+            <!-- Renders app.js & a webpack runtime.js file
+                <script src="/build/runtime.js"></script>
+                <script src="/build/app.js"></script> -->
+        {% endblock %}
+    </body>
+</html>

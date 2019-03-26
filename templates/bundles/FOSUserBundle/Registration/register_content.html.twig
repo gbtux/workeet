@@ -1,0 +1,66 @@
+{% trans_default_domain 'FOSUserBundle' %}
+<div class="limiter">
+    <div class="container-login100" style="background-image: url({{ asset('images/bg-01.jpg') }});">
+        <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+            {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'login100-form validate-form'}}) }}
+
+                <span class="login100-form-title p-b-49">
+                    Registration
+                </span>
+
+                <div class="wrap-input100 validate-input m-b-23" data-validate = "Username is required">
+                    <span class="label-input100">Email</span>
+                    {{ form_widget(form.email, { 'attr': {'class': 'input100', 'placeholder': 'Type your email'} }) }}
+                    <span class="focus-input100" data-symbol="&#xf206;"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input m-b-23" data-validate = "Username is required">
+                    <span class="label-input100">Username</span>
+                    {{ form_widget(form.username, { 'attr': {'class': 'input100', 'placeholder': 'Type your username', 'maxlength': '180'} }) }}
+                    <!--<input class="input100" type="text" id="fos_user_registration_form_username" name="fos_user_registration_form[username]" maxlength="180" pattern=".{2,}" placeholder="Type your username"> -->
+                    <span class="focus-input100" data-symbol="&#xf206;"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input m-b-23" data-validate="Password is required">
+                    <span class="label-input100">Password</span>
+                    {{ form_widget(form.plainPassword.first, { 'attr': {'class': 'input100', 'placeholder': 'Type your password'} }) }}
+                    <!-- <input class="input100" type="password" id="fos_user_registration_form_plainPassword_first" name="fos_user_registration_form[plainPassword][first]" placeholder="Type your password"> -->
+                    <span class="focus-input100" data-symbol="&#xf190;"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input m-b-23" data-validate="Password is required">
+                    <span class="label-input100">Repeat Password</span>
+                    {{ form_widget(form.plainPassword.second, { 'attr': {'class': 'input100', 'placeholder': 'Confirm your password'} }) }}
+                    <!-- <input class="input100" type="password" id="fos_user_registration_form_plainPassword_second" name="fos_user_registration_form[plainPassword][second]" placeholder="Type your password"> -->
+                    <span class="focus-input100" data-symbol="&#xf190;"></span>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <div class="wrap-login100-form-btn">
+                        <div class="login100-form-bgbtn"></div>
+                        <button class="login100-form-btn">Register</button>
+                    </div>
+                </div>
+                <!--
+                <div class="txt1 text-center p-t-54 p-b-20">
+                    <span>Or Sign Up Using</span>
+                </div>
+
+                <div class="flex-c-m">
+                    <a href="#" class="login100-social-item bg1">
+                        <i class="fa fa-facebook"></i>
+                    </a>
+
+                    <a href="#" class="login100-social-item bg2">
+                        <i class="fa fa-twitter"></i>
+                    </a>
+
+                    <a href="#" class="login100-social-item bg3">
+                        <i class="fa fa-google"></i>
+                    </a>
+                </div>
+                -->
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
