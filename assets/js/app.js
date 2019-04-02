@@ -5,7 +5,7 @@ import Vue from "vue";
 import './plugins/vuetify'
 import App from "./App.vue"
 import router from "./router/"
-//import store from "./store/"
+import store from "./store/"
 //import VueResource from 'vue-resource'
 import VuetifyConfirm from 'vuetify-confirm'
 
@@ -23,6 +23,6 @@ imagesContext.keys().forEach(imagesContext)
 
 new Vue({
     router,
-    //store,
+    store,
     render: h => h(App)
 }).$mount("#app")

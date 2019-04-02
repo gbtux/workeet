@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\DocumentRepository")
@@ -17,7 +19,16 @@ class Document
     private $id;
 
     /**
+     * @var string
+     * @Serializer\Groups({"simple"})
+     * @SerializedName("id")
+     */
+    private $hashedId;
+
+
+    /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Groups({"simple"})
      */
     private $nom;
 
@@ -28,13 +39,23 @@ class Document
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"simple"})
      */
     private $size;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\Groups({"simple"})
+     * @SerializedName("dateCreation")
      */
     private $dateCreation;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     * @Serializer\Groups({"simple"})
+     */
+    private $extension;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Repertoire", inversedBy="documents")
@@ -45,6 +66,13 @@ class Document
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setHashedId($hashedId)
+    {
+        $this->hashedId = $hashedId;
+
+        return $this;
     }
 
     public function getNom(): ?string
@@ -103,6 +131,18 @@ class Document
     public function setRepertoire(?Repertoire $repertoire): self
     {
         $this->repertoire = $repertoire;
+
+        return $this;
+    }
+
+    public function getExtension(): ?string
+    {
+        return $this->extension;
+    }
+
+    public function setExtension(?string $extension): self
+    {
+        $this->extension = $extension;
 
         return $this;
     }

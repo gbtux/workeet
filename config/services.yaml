@@ -28,6 +28,20 @@ services:
     # please note that last definitions always *replace* previous ones
     app.upload_listener:
         class: App\EventListener\UploadListener
-        arguments: ["@doctrine.orm.entity_manager"]
+        arguments: ["@doctrine.orm.entity_manager", "@event_dispatcher"]
         tags:
             - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
+    app.document.uploaded:
+        class: App\EventListener\DocumentUploadedListener
+        arguments: ["%kernel.root_dir%/../data/pdf/"]
+        tags:
+            - { name: kernel.event_listener, event: document.uploaded, method: onDocumentUpload }
+    Hashids\Hashids: '@hashids'
+    jms_customer_suscriber:
+        class: App\EventSubscriber\HashSuscriber
+        public: false
+        tags:
+            - { name: 'jms_serializer.event_subscriber' }
+        arguments:
+            - '@hashids'
+

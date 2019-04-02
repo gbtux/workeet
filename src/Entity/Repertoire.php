@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\RepertoireRepository")
@@ -20,18 +21,24 @@ class Repertoire
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Groups({"simple"})
      */
     private $nom;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     * @Serializer\Groups({"simple"})
+     */
+    private $hash;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="repertoire")
+     * @ORM\OrderBy({"dateCreation" = "DESC"})
+     * @Serializer\Groups({"simple"})
      */
     private $documents;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $hash;
+
 
     public function __construct()
     {

@@ -50,7 +50,7 @@ class HomeIDListener implements EventSubscriberInterface
         $this->manager->persist($user);
 
         $home = new Repertoire();
-        $home->setNom('Home de '. $user->getUsername());
+        $home->setNom('Mon espace');
         $home->setHash($homeId);
         $this->manager->persist($home);
 

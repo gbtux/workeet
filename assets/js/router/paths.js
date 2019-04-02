@@ -51,8 +51,8 @@ export default [
         }
     },
     {
-        path: '/home',
-        meta: { breadcrumb: false, chooseTheme: true },
+        path: '/home/:hash?',
+        meta: { breadcrumb: false, chooseTheme: false },
         name: 'Home',
         component: () => import(
             /* webpackChunkName: "routes" */
