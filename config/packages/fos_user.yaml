@@ -10,3 +10,5 @@ fos_user:
             enabled: true
     service:
         mailer: fos_user.mailer.twig_swift
+    group:
+        group_class: App\Entity\Groupe

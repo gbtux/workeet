@@ -28,7 +28,7 @@ services:
     # please note that last definitions always *replace* previous ones
     app.upload_listener:
         class: App\EventListener\UploadListener
-        arguments: ["@doctrine.orm.entity_manager", "@event_dispatcher"]
+        arguments: ["@doctrine.orm.entity_manager", "@event_dispatcher","@security.token_storage"]
         tags:
             - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
     app.document.uploaded:

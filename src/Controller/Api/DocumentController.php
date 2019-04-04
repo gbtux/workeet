@@ -2,11 +2,14 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\DocEvenement;
+use App\Entity\Partage;
 use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Hashids\Hashids;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class DocumentController
@@ -15,6 +18,66 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
  */
 class DocumentController extends AbstractController
 {
+    /**
+     * @param Request $request
+     * @param $hashedId
+     * @param Hashids $hashids
+     * @throws EntityNotFoundException
+     * @Rest\Post("/{hashedId}/share")
+     * @Rest\View(serializerGroups={"simple"})
+     */
+    public function addShare(Request $request, $hashedId, Hashids $hashids)
+    {
+        $id = $hashids->decode($hashedId);
+        $doc = $this->getDoctrine()->getRepository('App:Document')->findOneBy(['id' => $id]);
+        if(!$doc)
+            throw new EntityNotFoundException('Document not found');
+        $users = $request->get('users');
+        $groups = $request->get('groups');
+        $type = $request->get('type');
+        $em = $this->getDoctrine()->getManager();
+        if($users) {
+            foreach ($users as $user) {
+                $partage = new Partage();
+                $userid = $hashids->decode($user);
+                $utilisateur = $this->getDoctrine()->getRepository('App:Utilisateur')->findOneBy(['id' => $userid]);
+                $partage->setUtilisateur($utilisateur);
+                $partage->setTypePartage($type);
+                $partage->setDocument($doc);
+                $em->persist($partage);
+
+                $docEvent = new DocEvenement();
+                $docEvent->setDocument($doc);
+                $docEvent->setUtilisateur($this->getUser());
+                $docEvent->setDateEvent(new \DateTime());
+                $docEvent->setTypeEvent(DocEvenement::TYPE_EVENEMENT_PARTAGE);
+                $docEvent->setDescription(sprintf(" pour l'utilisateur %s (%s)", $utilisateur->getUsername(),$type === Partage::TYPE_PARTAGE_ECRITURE ? "ecriture" : "lecture"));
+                $em->persist($docEvent);
+            }
+        }
+
+        if($groups) {
+            foreach ($groups as $group) {
+                $partage = new Partage();
+                $groupid = $hashids->decode($group);
+                $groupe = $this->getDoctrine()->getRepository('App:Groupe')->findOneBy(['id' => $groupid]);
+                $partage->setGroupe($groupe);
+                $partage->setTypePartage($type);
+                $partage->setDocument($doc);
+                $em->persist($partage);
+
+                $docEvent = new DocEvenement();
+                $docEvent->setDocument($doc);
+                $docEvent->setUtilisateur($this->getUser());
+                $docEvent->setDateEvent(new \DateTime());
+                $docEvent->setTypeEvent(DocEvenement::TYPE_EVENEMENT_PARTAGE);
+                $docEvent->setDescription(sprintf("pour le groupe %s (%s)", $groupe->getName(),$type === Partage::TYPE_PARTAGE_ECRITURE ? "ecriture" : "lecture"));
+                $em->persist($docEvent);
+            }
+        }
+        $em->flush();
+        return $doc;
+    }
 
     /**
      * @param $hashedId
@@ -34,6 +97,22 @@ class DocumentController extends AbstractController
     }
 
     /**
+     * @param $hashedId
+     * @param Hashids $hashids
+     * @Rest\Get("/{hashedId}/download")
+     * @throws EntityNotFoundException
+     */
+    public function download($hashedId, Hashids $hashids)
+    {
+        $id = $hashids->decode($hashedId);
+        $doc = $this->getDoctrine()->getRepository('App:Document')->findOneBy(['id' => $id]);
+        if(!$doc)
+            throw new EntityNotFoundException('Document not found');
+        return $this->file($doc->getPath(), $doc->getNom());
+
+    }
+
+    /**
      * @Rest\Get("/{hashedId}")
      * @Rest\View(serializerGroups={"simple"})
      */
@@ -41,6 +120,28 @@ class DocumentController extends AbstractController
     {
         $id = $hashids->decode($hashedId);
         $doc = $this->getDoctrine()->getRepository('App:Document')->findOneBy(['id' => $id]);
+        return $doc;
+    }
+
+    /**
+     * @param Request $request
+     * @param $hashedId
+     * @param Hashids $hashids
+     * @throws EntityNotFoundException
+     * @Rest\Put("/{hashedId}/public")
+     * @Rest\View(serializerGroups={"simple"})
+     */
+    public function updateDocument(Request $request, $hashedId, Hashids $hashids)
+    {
+        $id = $hashids->decode($hashedId);
+        $doc = $this->getDoctrine()->getRepository('App:Document')->findOneBy(['id' => $id]);
+        if(!$doc)
+            throw new EntityNotFoundException('Document not found');
+        $isPublic = $request->request->get('isPublic');
+        $doc->setPublic($isPublic);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($doc);
+        $em->flush();
         return $doc;
     }
 }

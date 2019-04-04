@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\RepertoireRepository")
@@ -38,11 +39,23 @@ class Repertoire
      */
     private $documents;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Repertoire", mappedBy="repertoireParent")
+     * @Serializer\Groups({"simple"})
+     * @SerializedName("sousRepertoires")
+     */
+    private $sousRepertoires;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Repertoire", inversedBy="sousRepertoires")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     */
+    private $repertoireParent;
 
     public function __construct()
     {
         $this->documents = new ArrayCollection();
+        $this->sousRepertoires = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -104,4 +117,48 @@ class Repertoire
 
         return $this;
     }
+
+    /**
+     * @return Collection|Repertoire[]
+     */
+    public function getSousRepertoires(): Collection
+    {
+        return $this->sousRepertoires;
+    }
+
+    public function addSousRepertoire(Repertoire $sousRepertoire): self
+    {
+        if (!$this->sousRepertoires->contains($sousRepertoire)) {
+            $this->sousRepertoires[] = $sousRepertoire;
+            $sousRepertoire->setRepertoireParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSousRepertoire(Repertoire $sousRepertoire): self
+    {
+        if ($this->sousRepertoires->contains($sousRepertoire)) {
+            $this->sousRepertoires->removeElement($sousRepertoire);
+            // set the owning side to null (unless already changed)
+            if ($sousRepertoire->getRepertoireParent() === $this) {
+                $sousRepertoire->setRepertoireParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRepertoireParent(): ?self
+    {
+        return $this->repertoireParent;
+    }
+
+    public function setRepertoireParent(?self $repertoireParent): self
+    {
+        $this->repertoireParent = $repertoireParent;
+
+        return $this;
+    }
+
 }

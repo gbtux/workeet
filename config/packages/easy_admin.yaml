@@ -1,0 +1,13 @@
+easy_admin:
+    site_name: 'Workeet Backoffice'
+    design:
+        assets:
+            css:
+                - 'css/admin.css'
+    entities:
+        - App\Entity\Document
+        - App\Entity\Repertoire
+        - App\Entity\Partage
+        - App\Entity\DocEvenement
+        - App\Entity\Utilisateur
+        - App\Entity\Groupe
