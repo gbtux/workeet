@@ -58,5 +58,23 @@ export default [
             /* webpackChunkName: "routes" */
             `../views/Home.vue`
             )
+    },
+    {
+        path: '/shared',
+        meta: { breadcrumb: false, chooseTheme: false },
+        name: 'Shared',
+        component: () => import(
+            /* webpackChunkName: "routes" */
+            `../views/Shared.vue`
+            )
+    },
+    {
+        path: '/contacts',
+        meta: { breadcrumb: false, chooseTheme: false },
+        name: 'Contacts',
+        component: () => import(
+            /* webpackChunkName: "routes" */
+            `../views/contacts/ContactListe.vue`
+            )
     }
 ]

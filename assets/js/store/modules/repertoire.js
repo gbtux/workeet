@@ -16,7 +16,8 @@ export default {
             },
             size: 0,
             partages: []
-        }
+        },
+        shared: []
     },
 
     getters: {
@@ -25,6 +26,9 @@ export default {
         },
         document: function (state) {
             return state.document
+        },
+        shared: function (state) {
+            return state.shared
         }
     },
 
@@ -37,6 +41,9 @@ export default {
         },
         addSubRepertoire: function (state, {repertoire}) {
             state.repertoire.sousRepertoires.push(repertoire)
+        },
+        setShared: function (state, {shared}) {
+            state.shared = shared
         }
     },
 
@@ -77,9 +84,9 @@ export default {
             })
         },
 
-        createShare: async function(context, {id, users, groups, shareType}) {
+        createShare: async function(context, {id, users, groups, external, shareType}) {
             return new Promise((resolve, reject) => {
-                axios.post(url_api + '/documents/' + id + '/share', {users: users, groups: groups, type: shareType}).then(response => {
+                axios.post(url_api + '/documents/' + id + '/share', {users: users, groups: groups, external: external, type: shareType}).then(response => {
                     context.commit('setDocument', {document: response.data})
                     resolve()
                 })
@@ -96,6 +103,18 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.post(url_api + '/directories/' + id + '/sub', {nom: repertoire}).then(response => {
                     context.commit('addSubRepertoire', {repertoire: response.data})
+                    resolve()
+                })
+                .catch(e => {
+                    reject(e)
+                })
+            })
+        },
+
+        loadShared: async function(context) {
+            return new Promise((resolve, reject) => {
+                axios.get(url_api + '/documents/shared').then(response => {
+                    context.commit('setShared', {shared: response.data})
                     resolve()
                 })
                 .catch(e => {

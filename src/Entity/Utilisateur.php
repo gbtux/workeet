@@ -63,6 +63,11 @@ class Utilisateur extends BaseUser
      */
     private $docEvenements;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Contact", mappedBy="creator")
+     */
+    private $contacts;
+
     public function __construct()
     {
         parent::__construct();
@@ -70,6 +75,7 @@ class Utilisateur extends BaseUser
         $this->groups = new ArrayCollection();
         $this->partages = new ArrayCollection();
         $this->docEvenements = new ArrayCollection();
+        $this->contacts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +189,37 @@ class Utilisateur extends BaseUser
             // set the owning side to null (unless already changed)
             if ($docEvenement->getUtilisateur() === $this) {
                 $docEvenement->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Contact[]
+     */
+    public function getContacts(): Collection
+    {
+        return $this->contacts;
+    }
+
+    public function addContact(Contact $contact): self
+    {
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts[] = $contact;
+            $contact->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContact(Contact $contact): self
+    {
+        if ($this->contacts->contains($contact)) {
+            $this->contacts->removeElement($contact);
+            // set the owning side to null (unless already changed)
+            if ($contact->getCreator() === $this) {
+                $contact->setCreator(null);
             }
         }
 

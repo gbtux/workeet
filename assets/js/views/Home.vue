@@ -6,6 +6,13 @@
                     <v-flex sm12>
                         <h3>{{ repertoire.nom }}</h3>
                     </v-flex>
+                    <v-flex sm12>
+                        <v-breadcrumbs :items="repertoire.breadcrumb" divider=">">
+                            <template v-slot:item="props">
+                                <router-link :to="{name: 'Home', params: {hash: props.item.hash}}">{{ props.item.name.toUpperCase() }}</router-link>
+                            </template>
+                        </v-breadcrumbs>
+                    </v-flex>
                     <v-flex lg12>
                         <v-data-table
                             :headers="headersDirectory"
@@ -15,10 +22,13 @@
                             item-key="hash"
                             select-all
                             hide-actions
+                            v-if="repertoire.sousRepertoires.length > 0"
                         >
                             <template v-slot:items="props">
                                 <td><v-checkbox v-model="props.selected" primary hide-details></v-checkbox></td>
-                                <td><img class="img-fluid" :src="getDirectoryImage()" style="max-height: 70%"></td>
+                                <td style="text-align: center">
+                                    <img class="img-fluid" :src="getDirectoryImage()" style="max-height: 70%">
+                                </td>
                                 <td><router-link :to="{name: 'Home', params: {hash: props.item.hash}}">{{ props.item.nom }}</router-link></td>
                                 <td class="text-xs-right">{{ props.item.documents.length}}</td>
                             </template>
@@ -37,7 +47,12 @@
                                 <td>
                                     <v-checkbox v-model="props.selected" primary hide-details></v-checkbox>
                                 </td>
-                                <td><img class="img-fluid" :src="getImage(props.item.extension)" style="max-height: 70%"></td>
+                                <td>
+                                    <!-- <img class="img-fluid" :src="getImage(props.item.extension)" style="max-height: 70%"> -->
+                                    <div class="fi fi-size-xs" :class="'fi'-props.item.extension">
+                                        <div class="fi-content">{{ props.item.extension }}</div>
+                                    </div>
+                                </td>
                                 <td><a href="" style="text-decoration: none; color: inherit;" @click.prevent="showDetails(props.item.id)">{{ props.item.nom }}</a></td>
                                 <td class="text-xs-right">
                                     <v-icon style="cursor: pointer" @click="showFullscreen(props.item)">visibility</v-icon>
@@ -49,7 +64,7 @@
                         </v-data-table>
                     </v-flex>
                     <v-navigation-drawer class="setting-drawer" temporary right v-model="rightDrawer" hide-overlay fixed width="500">
-                        <DocumentDetails :id="currentSelected" v-if="modeDrawer === 'showDetails'"></DocumentDetails>
+                        <DocumentDetails :id="currentSelected" :isShared="false" v-if="modeDrawer === 'showDetails'"></DocumentDetails>
                     </v-navigation-drawer>
                 </v-layout>
             </v-container>
@@ -138,6 +153,7 @@
     import filesize from 'filesize'
     import moment from 'moment'
     import DocumentDetails from "./DocumentDetails";
+    import 'css-file-icons/build/css-file-icons.css'
 
     export default {
         name: "Home",
@@ -202,7 +218,7 @@
                 this.$store.dispatch('repertoire/loadRepertoire', {id: this.$route.params.hash ? this.$route.params.hash : home_id})
                 this.dropzoneOptions.headers.directory = this.$route.params.hash ? this.$route.params.hash : home_id
             },
-            getImage(extension) {
+            /*getImage(extension) {
                 let extensions = {
                     'avi' : 'build/assets/img/filetypes/avi.png',
                     'doc' : 'build/assets/img/filetypes/doc.png',
@@ -221,7 +237,7 @@
                     return extensions[extension]
                 }
                 return 'build/assets/img/filetypes/unknown.png'
-            },
+            },*/
 
             getSize(size) {
                 return filesize(size)
@@ -271,7 +287,7 @@
                 })
             },
             getDirectoryImage() {
-                return 'build/assets/img/filetypes/unknown.png'
+                return 'build/assets/img/iconfinder_envelope-2_416374.svg'
             }
         }
     }

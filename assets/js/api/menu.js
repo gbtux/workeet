@@ -5,6 +5,18 @@ const Menu =  [
             group: 'apps',
             icon: 'home',
             name: 'Home',
+        },
+        {
+            title: 'Fichiers partagés',
+            group: 'apps',
+            icon: 'share',
+            name: 'Shared',
+        },
+        {
+            title: 'Contacts',
+            group: 'apps',
+            icon: 'people',
+            name: 'Contacts',
         }
     ]
 

@@ -19,6 +19,25 @@ use Symfony\Component\HttpFoundation\Request;
 class DocumentController extends AbstractController
 {
     /**
+     * @Rest\Get("/shared")
+     * @Rest\View(serializerGroups={"simple"})
+     */
+    public function getSharedDocuments()
+    {
+        $groupes = $this->getUser()->getGroups();
+        $partages = $this->getDoctrine()->getRepository('App:Partage')->getShared($this->getUser(), $groupes);
+        $docs = [];
+        $ids = [];
+        foreach ($partages as $partage) {
+            if(! in_array($partage->getDocument()->getId(), $ids)) {
+                $docs[] = $partage->getDocument();
+                $ids[] = $partage->getDocument()->getId();
+            }
+        }
+        return $docs;
+    }
+
+    /**
      * @param Request $request
      * @param $hashedId
      * @param Hashids $hashids
@@ -34,6 +53,7 @@ class DocumentController extends AbstractController
             throw new EntityNotFoundException('Document not found');
         $users = $request->get('users');
         $groups = $request->get('groups');
+        $external = $request->get('external');
         $type = $request->get('type');
         $em = $this->getDoctrine()->getManager();
         if($users) {
@@ -73,7 +93,33 @@ class DocumentController extends AbstractController
                 $docEvent->setTypeEvent(DocEvenement::TYPE_EVENEMENT_PARTAGE);
                 $docEvent->setDescription(sprintf("pour le groupe %s (%s)", $groupe->getName(),$type === Partage::TYPE_PARTAGE_ECRITURE ? "ecriture" : "lecture"));
                 $em->persist($docEvent);
+
+                //TODO : send a notification / an email to all users in groups
             }
+        }
+
+        if($external) {
+            $shares = $doc->getPartagesExternes();
+            if(null !== $shares) {
+                $result = array_merge($shares, $external);
+                $doc->setPartagesExternes($result);
+            }else{
+                $doc->setPartagesExternes($external);
+            }
+
+            foreach ($doc->getPartagesExternes() as $share) {
+                $docEvent = new DocEvenement();
+                $docEvent->setDocument($doc);
+                $docEvent->setExternalUser($share);
+                $docEvent->setDateEvent(new \DateTime());
+                $docEvent->setTypeEvent(DocEvenement::TYPE_EVENEMENT_PARTAGE);
+                $docEvent->setDescription(sprintf("pour l'utilisateur externe %s", $share));
+                $em->persist($docEvent);
+
+                //TODO : send an email
+            }
+
+            $em->persist($doc);
         }
         $em->flush();
         return $doc;

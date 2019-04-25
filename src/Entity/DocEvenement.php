@@ -49,7 +49,7 @@ class DocEvenement
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateur", inversedBy="docEvenements")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      * @Serializer\Groups({"simple"})
      */
     private $utilisateur;
@@ -66,6 +66,11 @@ class DocEvenement
      */
     private $description;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $externalUser;
+    
     public function __toString()
     {
         return (string) $this->id;
@@ -139,6 +144,18 @@ class DocEvenement
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getExternalUser(): ?string
+    {
+        return $this->externalUser;
+    }
+
+    public function setExternalUser(?string $externalUser): self
+    {
+        $this->externalUser = $externalUser;
 
         return $this;
     }

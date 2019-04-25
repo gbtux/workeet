@@ -52,7 +52,7 @@
             <v-tab-item>
                 <v-card flat>
                     <v-card-text>
-                        <v-flex md12 style="padding: 0; padding-left: 30px;">
+                        <v-flex md12 style="padding: 0; padding-left: 30px;" v-if="!isShared">
                             <v-form>
                                 <v-switch v-model="ldocument.public" color="red" @change="updatePublic">
                                     <template v-slot:label>
@@ -61,7 +61,7 @@
                                 </v-switch>
                             </v-form>
                         </v-flex>
-                        <v-flex md12 style="padding-top: 0">
+                        <v-flex md12 style="padding-top: 0" v-if="!isShared">
                             <div class="subheading">Partager à d'autres utilisateurs ou groupes</div>
                             <v-flex xs12>
                                 <v-autocomplete
@@ -103,7 +103,7 @@
                                     </template>
                                 </v-autocomplete>
                             </v-flex>
-                            <v-flex xs12 style="padding-top: 0">
+                            <v-flex xs12 style="padding-top: 0" v-if="!isShared">
                                 <v-autocomplete
                                         v-model="selectGroups"
                                         :search-input.sync="searchGroups"
@@ -143,7 +143,16 @@
                                     </template>
                                 </v-autocomplete>
                             </v-flex>
-                            <v-flex xs12 style="padding-top: 0">
+                            <v-flex xs12 style="padding-top: 0" v-if="!isShared">
+                                <v-combobox
+                                        v-model="selectedExternalUsers"
+                                        :items="externalUsers"
+                                        chips
+                                        multiple
+                                        label="Add external contact with his mail"
+                                ></v-combobox>
+                            </v-flex>
+                            <v-flex xs12 style="padding-top: 0" v-if="!isShared">
                                 <v-select :items="sharedTypes" v-model="shareTypeSelected" label="Type de partage"></v-select>
                                 <v-btn color="primary" @click="addShare">Ajouter</v-btn>
                             </v-flex>
@@ -166,6 +175,22 @@
                                         <v-flex>
                                             <v-icon v-if="partage.typePartage === 'write'">lock_open</v-icon>
                                             <v-icon v-if="partage.typePartage === 'read'">lock</v-icon>
+                                            <v-icon color="red">delete</v-icon>
+                                        </v-flex>
+                                    </v-list-tile-action>
+                                </v-list-tile>
+                            </v-list>
+                            <div class="subheading">Partages externes</div>
+                            <v-list two-line>
+                                <v-list-tile avatar v-for="(partage,index) in document.partagesExternes" :key="index">
+                                    <v-list-tile-avatar>
+                                        <v-icon class="primary white--text">face</v-icon>
+                                    </v-list-tile-avatar>
+                                    <v-list-tile-content>
+                                        <v-list-tile-title>{{ partage }}</v-list-tile-title>
+                                    </v-list-tile-content>
+                                    <v-list-tile-action>
+                                        <v-flex>
                                             <v-icon color="red">delete</v-icon>
                                         </v-flex>
                                     </v-list-tile-action>
@@ -212,7 +237,8 @@
     export default {
         name: "DocumentDetails",
         props: {
-            id: String
+            id: String,
+            isShared: Boolean
         },
         data() {
             return {
@@ -224,7 +250,9 @@
                 groupItems: [],
                 searchGroups: null,
                 sharedTypes: [ {text: 'Lecture', value: 'read'}, {text: 'Ecriture', value: 'write'} ],
-                shareTypeSelected: null
+                shareTypeSelected: {text: 'Lecture', value: 'read'},
+                selectedExternalUsers: null,
+                externalUsers: []
             }
         },
         computed: {
@@ -278,10 +306,11 @@
                 })
             },
             addShare() {
-                this.$store.dispatch('repertoire/createShare', {id: this.id, users: this.selectUsers, groups: this.selectGroups, shareType: this.shareTypeSelected}).then(response => {
+                this.$store.dispatch('repertoire/createShare', {id: this.id, users: this.selectUsers, groups: this.selectGroups, external: this.selectedExternalUsers, shareType: this.shareTypeSelected}).then(response => {
                     this.selectGroups = null
                     this.selectUsers = null
                     this.shareTypeSelected = null
+                    this.selectedExternalUsers = null
                 })
             }
         }

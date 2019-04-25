@@ -52,6 +52,12 @@ class Repertoire
      */
     private $repertoireParent;
 
+    /**
+     * @ORM\Column(type="json")
+     * @Serializer\Groups({"simple"})
+     */
+    private $breadcrumb = [];
+
     public function __construct()
     {
         $this->documents = new ArrayCollection();
@@ -157,6 +163,18 @@ class Repertoire
     public function setRepertoireParent(?self $repertoireParent): self
     {
         $this->repertoireParent = $repertoireParent;
+
+        return $this;
+    }
+
+    public function getBreadcrumb(): ?array
+    {
+        return $this->breadcrumb;
+    }
+
+    public function setBreadcrumb(array $breadcrumb): self
+    {
+        $this->breadcrumb = $breadcrumb;
 
         return $this;
     }

@@ -98,6 +98,13 @@ class Document
      */
     private $public = false;
 
+    /**
+     * @ORM\Column(type="simple_array", nullable=true)
+     * @Serializer\Groups({"simple"})
+     * @SerializedName("partagesExternes")
+     */
+    private $partagesExternes = [];
+
     public function __construct()
     {
         $this->partages = new ArrayCollection();
@@ -295,6 +302,18 @@ class Document
     public function setPublic(bool $public): self
     {
         $this->public = $public;
+
+        return $this;
+    }
+
+    public function getPartagesExternes(): ?array
+    {
+        return $this->partagesExternes;
+    }
+
+    public function setPartagesExternes(?array $partagesExternes): self
+    {
+        $this->partagesExternes = $partagesExternes;
 
         return $this;
     }

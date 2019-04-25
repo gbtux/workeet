@@ -46,6 +46,9 @@ class RepertoireController extends AbstractController
             $hash = uniqid("dir", true);
             $nRep->setHash($hash);
             $nRep->setRepertoireParent($rep);
+            $bc = $rep->getBreadcrumb();
+            $bc[] = ['hash' => $rep->getHash(), 'name' => $rep->getNom()];
+            $nRep->setBreadcrumb($bc);
             $em = $this->getDoctrine()->getManager();
             $em->persist($nRep);
             $em->flush();
